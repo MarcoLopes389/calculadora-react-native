@@ -4,19 +4,22 @@ import {
     Text,
     View,
     StyleSheet,
-    SafeAreaView
+    SafeAreaView,
+    Dimensions
 } from 'react-native'
+
+const { height, width } = Dimensions.get("window")
 
 export default function Teclado(props) {
 
-    const { setConta, setResultado, conta, visor, setVisor } = props.funcoes
+    const { setConta, setResultado, conta } = props.funcoes
     const resultado = props.resultado
 
     return (
       <SafeAreaView style={{height: '70%', flexDirection: 'row'}}>
         <View style={estilos.linha}>
             <TouchableHighlight
-             style={estilos.botao}
+             style={estilos.botaoCaC}
              onPress={() => {
                  if(conta != ''){
                      setConta(String(conta).substr(0, conta.length - 1))
@@ -24,7 +27,7 @@ export default function Teclado(props) {
                  }
              }}
             >
-                <Text style={estilos.texto}>
+                <Text style={estilos.textoCaC}>
                     C
                 </Text>
             </TouchableHighlight>
@@ -73,13 +76,13 @@ export default function Teclado(props) {
         </View>
         <View style={estilos.linha}>
             <TouchableHighlight
-             style={estilos.botao}
+             style={estilos.botaoCaC}
              onPress={() => {
                 setConta('')
                 setResultado('')
             }}
             >
-                <Text style={estilos.texto}>
+                <Text style={estilos.textoCaC}>
                     AC
                 </Text>
             </TouchableHighlight>
@@ -131,26 +134,15 @@ export default function Teclado(props) {
             </TouchableHighlight>
         </View>
         <View style={estilos.linha}>
-            <TouchableHighlight
+        <TouchableHighlight
              style={estilos.botao}
-             onPress={()=>{
-                const tnum = conta.substr(conta.length -2, conta.length)
-                const num = conta.substr(conta.length -1, conta.length)
-                let res
-                
-                if(typeof Number(tnum) == 'number'){
-                    res = String(tnum/100)
-                    setConta(conta.substr(0, conta.length -2) + res)
-                    setResultado(resultado.substr(0, resultado.length -2) + res)
-                } else {
-                    res = String(num/100)
-                    setConta(conta.substr(0, conta.length -1) + res)
-                    setResultado(resultado.substr(0, resultado.length -1) + res)
-                }
+             onPress={() => {
+                 setConta('(' + conta + ')')
+                 setResultado('(' + resultado + ')')
              }}
              >
                 <Text style={estilos.texto}>
-                    %
+                    ( )
                 </Text>
             </TouchableHighlight>
             <TouchableHighlight
@@ -187,7 +179,7 @@ export default function Teclado(props) {
                 </Text>
             </TouchableHighlight>
             <TouchableHighlight
-             style={estilos.botao}
+             style={estilos.botaoIgual}
              onPress={() => {
                 try {
                     const res = eval(conta)
@@ -206,29 +198,40 @@ export default function Teclado(props) {
         </View>
         <View style={estilos.linha}>
             <TouchableHighlight
-             style={estilos.botao}
-             onPress={() => {
-                 setConta('(' + conta + ')')
-                 setResultado('(' + resultado + ')')
+             style={estilos.botaoOperador}
+             onPress={()=>{
+                const tnum = conta.substr(conta.length -2, conta.length)
+                const num = conta.substr(conta.length -1, conta.length)
+                let res
+                
+                if(conta != '' && tnum[0] != '-' && tnum[0] != '+'){
+                    res = String(tnum/100)
+                    setConta(conta.substr(0, conta.length -2) + res)
+                    setResultado(resultado.substr(0, resultado.length -2) + res)
+                } else {
+                    res = String(num/100)
+                    setConta(conta.substr(0, conta.length -1) + res)
+                    setResultado(resultado.substr(0, resultado.length -1) + res)
+                }
              }}
              >
                 <Text style={estilos.texto}>
-                    ( )
+                    %
                 </Text>
             </TouchableHighlight>
             <TouchableHighlight
-             style={estilos.botao}
+             style={estilos.botaoOperador}
              onPress={() => {
                 setConta(conta + '*')
                 setResultado(resultado + 'x')
              }}
              >
                 <Text style={estilos.texto}>
-                    X
+                    x
                 </Text>
             </TouchableHighlight>
             <TouchableHighlight
-             style={estilos.botao}
+             style={estilos.botaoOperador}
              onPress={() => {
                 setConta(conta + '+')
                 setResultado(resultado + '+')
@@ -239,16 +242,16 @@ export default function Teclado(props) {
                 </Text>
             </TouchableHighlight>
             <TouchableHighlight
-             style={estilos.botao}
+             style={estilos.botaoOperador}
              onPress={() => {
                 setConta(conta + '/')
-                setResultado(resultado + '/')
+                setResultado(resultado + '÷')
              }}
              >
-                <Text style={estilos.texto}>/</Text>
+                <Text style={estilos.texto}>÷</Text>
             </TouchableHighlight>
             <TouchableHighlight
-             style={estilos.botao}
+             style={estilos.botaoOperador}
              onPress={() => {
                 setConta(conta + '-')
                 setResultado(resultado + '-')
@@ -269,20 +272,46 @@ const estilos = StyleSheet.create({
     },
     botao: {
         backgroundColor: 'gray',
-        padding: 34.5,
+        padding: width>380 ? 34.5 : 29,
         alignItems: 'center',
         borderColor: 'black',
-        borderWidth: 2
+        borderWidth: 2,
+        borderRadius: 10,
+        margin: 0.5
     },
-    botaoAC: {
-        backgroundColor: 'gray',
-        padding: 25,
+    botaoOperador: {
+        backgroundColor: 'orange',
+        padding: width>380 ? 34.5 : 29,
         alignItems: 'center',
         borderColor: 'black',
-        borderWidth: 2
+        borderWidth: 2,
+        borderRadius: 10,
+        margin: 0.5
+    },
+    botaoIgual: {
+        backgroundColor: 'red',
+        padding: width>380 ? 34.5 : 29,
+        alignItems: 'center',
+        borderColor: 'black',
+        borderWidth: 2,
+        borderRadius: 10,
+        margin: 0.5
+    },
+    botaoCaC: {
+        backgroundColor: 'yellow',
+        padding: width>380 ? 34.5 : 29,
+        alignItems: 'center',
+        borderColor: 'black',
+        borderWidth: 2,
+        borderRadius: 10,
+        margin: 0.5
     },
     texto: {
         fontSize: 20,
         color: 'yellow'
+    },
+    textoCaC: {
+        fontSize: 20,
+        color: 'black'
     }
 })
